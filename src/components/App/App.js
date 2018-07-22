@@ -10,7 +10,7 @@ import Todo from '../../containers/Todo';
 class App extends Component {
   render() {
     return (
-      <Grid padded centered columns={ 3 }>
+      <Grid padded centered doubling columns={ 2 }>
         <Grid.Row>
           <Grid.Column>
             <Todo />

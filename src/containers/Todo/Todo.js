@@ -7,26 +7,28 @@ import {
 } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 
-import { addItem, toggleItem, removeItem } from '../../actions/';
+import { addTodoItem, toggleTodoItem, removeTodoItem, setActiveFilter } from '../../actions/';
 
-import InputForm from '../../components/Todo/InputForm';
-import ItemList from '../../components/Todo/ItemList';
+import InputForm  from '../../components/Todo/InputForm';
+import FilterBar  from '../../components/Todo/FilterBar';
+import ItemList   from '../../components/Todo/ItemList';
 
 
 class Todo extends Component {
   constructor(props) {
     super(props);
-    this.handleSubmit       = this.handleSubmit.bind(this);
-    this.handleFocus        = this.handleFocus.bind(this);
-    this.handleRef          = this.handleRef.bind(this);
-    this.onItemClickHandler = this.onItemClickHandler.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleFocus  = this.handleFocus.bind(this);
+    this.handleRef    = this.handleRef.bind(this);
+    this.onTodoItemClickHandler = this.onTodoItemClickHandler.bind(this);
+    this.onMenuItemClickHandler = this.onMenuItemClickHandler.bind(this);
   }
 
   handleSubmit(e) {
     e.preventDefault();
     const input = e.target.getElementsByTagName('input')[0]
     const value = input.value;
-    if (value.length) this.props.addItem(value);
+    if (value.length) this.props.addTodoItem(value);
     this.handleFocus();
     input.value = '';
   }
@@ -39,14 +41,18 @@ class Todo extends Component {
     this.inputField = e
   }
 
-  onItemClickHandler(e, id) {
+  onMenuItemClickHandler(e, { name }) {
+    this.props.onMenuItemClick(name);
+  }
+
+  onTodoItemClickHandler(e, id) {
     e.preventDefault();
     const classNames = e.target.className.split(' ');
 
     if (classNames.includes('remove')) {
-      this.props.onItemRemove(id);
+      this.props.onTodoItemRemove(id);
     } else {
-      this.props.onItemToggle(id);
+      this.props.onTodoItemToggle(id);
     }
   }
 
@@ -55,7 +61,7 @@ class Todo extends Component {
   }
 
   render() {
-    const { items } = this.props;
+    const { items, activeMenuItem } = this.props;
 
     return (
       <Container>          
@@ -65,9 +71,16 @@ class Todo extends Component {
           handleSubmit={ this.handleSubmit }
         />
         <Divider hidden />
+        <FilterBar 
+          items={ items }
+          onClick={ this.onMenuItemClickHandler }
+          active={ activeMenuItem }
+        />
+        <Divider hidden />
         <ItemList
           items={ items }
-          onItemClick={ this.onItemClickHandler }
+          onTodoItemClick={ this.onTodoItemClickHandler }
+          activeMenuItem={ activeMenuItem }
         />
       </Container>
     );
@@ -75,25 +88,31 @@ class Todo extends Component {
 }
 
 Todo.propTypes = {
-  items:    PropTypes.object.isRequired,
-  addItem:  PropTypes.func.isRequired
+  items:            PropTypes.object.isRequired,
+  activeMenuItem:   PropTypes.string.isRequired,
+  addTodoItem:      PropTypes.func.isRequired,
+  onTodoItemToggle: PropTypes.func.isRequired,
+  onTodoItemRemove: PropTypes.func.isRequired,
+  onMenuItemClick:  PropTypes.func.isRequired,
 }
 
 const mapStateToProps = state => {
   const items = Object.values(state.items);
   return ({
     items: {
-      all:        items,
-      completed:  items.filter( item => item.isChecked ),
+      all:        items.filter( item => !item.isRemoved ),
+      completed:  items.filter( item => item.isCompleted && !item.isRemoved ),
       removed:    items.filter( item => item.isRemoved ),
-    }
+    },
+    activeMenuItem: state.filter.active,
   })
 }
 
 const mapDispatchToProps = dispatch => ({
-  addItem:      value => dispatch(addItem(value)),
-  onItemToggle: id => dispatch(toggleItem(id)),
-  onItemRemove: id => dispatch(removeItem(id))
+  addTodoItem:      value =>  dispatch(addTodoItem(value)),
+  onTodoItemToggle: id =>     dispatch(toggleTodoItem(id)),
+  onTodoItemRemove: id =>     dispatch(removeTodoItem(id)),
+  onMenuItemClick:  name =>   dispatch(setActiveFilter(name))
 });
 
 export default connect(

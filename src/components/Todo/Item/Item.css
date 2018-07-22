@@ -1,0 +1,11 @@
+.item.completed > .content > .header {
+  color: rgba(0,0,0,.4);
+  text-decoration: line-through;
+  -webkit-transition: .1s color ease, .1s padding-left ease,.1s background-color ease;
+  -o-transition:      .1s color ease, .1s padding-left ease,.1s background-color ease;
+  transition:         .1s color ease, .1s padding-left ease,.1s background-color ease;
+}
+
+.item.completed:hover > .content > .header {
+  color: rgba(0,0,0,.87);
+}

@@ -1,19 +1,21 @@
 import Types from './../constants/ActionTypes';
 
 
-export const addItem = value => (dispatch, getState) => {
+export const addTodoItem = value => (dispatch, getState) => {
   const id = Object.keys(getState().items).length;
   const data = {
     [id]: {
       id,
       value,
-      isChecked: false,
-      isRemoved: false
+      isCompleted:  false,
+      isRemoved:    false
     }
   }
-  dispatch({ type: Types.ADD_ITEM, data });
+  dispatch({ type: Types.ADD_TODO_ITEM, data });
 };
 
-export const toggleItem = id => dispatch => dispatch({ type: Types.TOGGLE_ITEM, id });
+export const toggleTodoItem = id => dispatch => dispatch({ type: Types.TOGGLE_TODO_ITEM, id });
 
-export const removeItem = id => dispatch => dispatch({ type: Types.REMOVE_ITEM, id });
+export const removeTodoItem = id => dispatch => dispatch({ type: Types.REMOVE_TODO_ITEM, id });
+
+export const setActiveFilter = name => dispatch => dispatch({ type: Types.SET_ACTIVE_FILTER, name });
