@@ -8,6 +8,7 @@ import {
 import { connect } from 'react-redux';
 
 import { addTodoItem, toggleTodoItem, removeTodoItem, setActiveFilter } from '../../actions/';
+import { classifyItems } from '../../reducers/items';
 
 import InputForm  from '../../components/Todo/InputForm';
 import FilterBar  from '../../components/Todo/FilterBar';
@@ -96,17 +97,10 @@ Todo.propTypes = {
   onMenuItemClick:  PropTypes.func.isRequired,
 }
 
-const mapStateToProps = state => {
-  const items = Object.values(state.items);
-  return ({
-    items: {
-      all:        items.filter( item => !item.isRemoved ),
-      completed:  items.filter( item => item.isCompleted && !item.isRemoved ),
-      removed:    items.filter( item => item.isRemoved ),
-    },
-    activeMenuItem: state.filter.active,
-  })
-}
+const mapStateToProps = state => ({
+  items:          classifyItems(Object.values(state.items)),
+  activeMenuItem: state.filter.active,
+});
 
 const mapDispatchToProps = dispatch => ({
   addTodoItem:      value =>  dispatch(addTodoItem(value)),

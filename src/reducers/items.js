@@ -28,3 +28,9 @@ export default (state = {}, action) => {
       return state;
   }
 }
+
+export const classifyItems = items => ({
+  all:        items.filter( item => !item.isRemoved ),
+  completed:  items.filter( item => item.isCompleted && !item.isRemoved ),
+  removed:    items.filter( item => item.isRemoved ),
+})
