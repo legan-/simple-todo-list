@@ -11,7 +11,7 @@ React/redux based simple todo list
 
 ## Getting Started
 
-**Installing:**
+**Installation:**
 
 `npm i`
 
